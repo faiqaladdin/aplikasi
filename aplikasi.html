@@ -1,1 +1,1004 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyDay — Manajemen Waktu &amp; Keuangan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --denim-deep:#1B3A5C;
+    --denim:#2F5C8F;
+    --denim-mid:#3E74B5;
+    --denim-bright:#5B9BE0;
+    --denim-pale:#E4EEFB;
+    --bg:#F3F6FA;
+    --card:#FFFFFF;
+    --gray-line:#E6EAF0;
+    --ink:#182B3D;
+    --ink-soft:#5D7186;
+    --gold:#F5A623;
+    --gold-soft:#FFE7BE;
+    --green:#3CB878;
+    --amber:#F2A93B;
+    --red:#E5594F;
+    --radius-lg:22px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --shadow: 0 18px 40px -18px rgba(27,58,92,0.35);
+    --shadow-sm: 0 8px 20px -10px rgba(27,58,92,0.25);
+  }
 
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% -10%, rgba(91,155,224,0.20), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(245,166,35,0.10), transparent 40%),
+      var(--bg);
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+  h1,h2,h3,.brand{font-family:'Baloo 2', sans-serif;}
+
+  .app{width:100%; max-width:460px; display:flex; flex-direction:column; gap:16px;}
+
+  /* ---------------- TOPBAR (dashboard & subpages) ---------------- */
+  .topbar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    padding:4px 4px 0;
+  }
+  .topbar.show{display:flex;}
+  .topbar .greet{font-size:14px; font-weight:700; color:var(--denim-deep);}
+  .topbar .greet span{color:var(--gold);}
+  .icon-btn{
+    background:var(--card);
+    border:1.5px solid var(--gray-line);
+    border-radius:12px;
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:var(--shadow-sm);
+  }
+
+  /* ---------------- GENERIC CARD / PAGE ---------------- */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:30px 24px;
+    display:none;
+    flex-direction:column;
+    gap:4px;
+    animation:rise .4s ease;
+  }
+  .card.active{display:flex;}
+  @keyframes rise{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------------- COVER / AUTH ---------------- */
+  #page-login, #page-register{
+    align-items:center;
+    text-align:center;
+    padding:44px 26px 34px;
+    background:linear-gradient(160deg, var(--denim-deep) 0%, var(--denim) 55%, var(--denim-mid) 100%);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    min-height:480px;
+    justify-content:center;
+  }
+  #page-login::before, #page-register::before{
+    content:"";
+    position:absolute;
+    width:300px; height:300px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    top:-120px; right:-100px;
+  }
+  #page-login::after, #page-register::after{
+    content:"";
+    position:absolute;
+    width:200px; height:200px;
+    border-radius:50%;
+    background:rgba(245,166,35,0.10);
+    bottom:-80px; left:-70px;
+  }
+  .brand-mark{
+    z-index:1;
+    width:56px; height:56px;
+    border-radius:16px;
+    background:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px;
+    box-shadow:0 10px 22px -6px rgba(245,166,35,0.65);
+    margin-bottom:14px;
+  }
+  .brand-title{z-index:1; font-size:26px; font-weight:800; letter-spacing:.01em;}
+  .brand-sub{z-index:1; font-size:13.5px; color:rgba(255,255,255,0.82); margin-top:6px; font-weight:500;}
+
+  .auth-form{
+    z-index:1;
+    width:100%;
+    margin-top:26px;
+    text-align:left;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    border-radius:var(--radius-md);
+    padding:20px 18px 22px;
+    backdrop-filter:blur(2px);
+  }
+  .auth-form label{
+    font-size:12.5px; font-weight:700; color:var(--gold-soft);
+    display:block; margin:12px 0 6px;
+  }
+  .auth-form label:first-child{margin-top:0;}
+  .auth-form input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:none;
+    background:rgba(255,255,255,0.95);
+    font-size:14.5px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+  }
+  .auth-form input:focus{outline:2px solid var(--gold);}
+
+  .btn-gold{
+    z-index:1;
+    width:100%;
+    margin-top:20px;
+    background:var(--gold);
+    color:var(--denim-deep);
+    border:none;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    padding:14px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 10px 22px -8px rgba(245,166,35,0.6);
+    transition:transform .18s ease;
+  }
+  .btn-gold:hover{transform:translateY(-2px);}
+  .btn-gold:disabled{opacity:.6; cursor:default; transform:none;}
+
+  .switch-link{
+    z-index:1;
+    margin-top:16px;
+    font-size:13px;
+    color:rgba(255,255,255,0.85);
+  }
+  .switch-link a{color:var(--gold); font-weight:700; text-decoration:none; cursor:pointer;}
+  .switch-link a:hover{text-decoration:underline;}
+
+  .auth-error{
+    z-index:1;
+    margin-top:12px;
+    font-size:12.5px;
+    font-weight:600;
+    color:#FFD3CE;
+    background:rgba(229,89,79,0.25);
+    border:1px solid rgba(229,89,79,0.5);
+    padding:8px 12px;
+    border-radius:10px;
+    display:none;
+  }
+  .auth-success{
+    z-index:1;
+    margin-top:12px;
+    font-size:12.5px;
+    font-weight:600;
+    color:#D6FFEA;
+    background:rgba(60,184,120,0.25);
+    border:1px solid rgba(60,184,120,0.5);
+    padding:8px 12px;
+    border-radius:10px;
+    display:none;
+  }
+
+  /* ---------------- DASHBOARD ---------------- */
+  #page-dashboard{padding:26px 20px;}
+  .dash-header{text-align:center; margin-bottom:6px;}
+  .dash-header h2{font-size:20px; font-weight:800; color:var(--denim-deep);}
+  .dash-header p{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+
+  .streak-strip{
+    display:flex;
+    gap:10px;
+    margin:16px 0 6px;
+  }
+  .streak-box{
+    flex:1;
+    background:var(--denim-pale);
+    border-radius:var(--radius-md);
+    padding:12px 10px;
+    text-align:center;
+  }
+  .streak-box .num{font-size:19px; font-weight:800; color:var(--denim-deep); font-family:'Baloo 2',sans-serif;}
+  .streak-box .lbl{font-size:11px; color:var(--ink-soft); font-weight:600; margin-top:2px;}
+
+  .menu-grid{display:flex; flex-direction:column; gap:14px; margin-top:16px;}
+  .menu-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background:linear-gradient(135deg, var(--denim) 0%, var(--denim-deep) 100%);
+    color:#fff;
+    border-radius:var(--radius-lg);
+    padding:20px;
+    cursor:pointer;
+    box-shadow:var(--shadow-sm);
+    transition:transform .18s ease;
+    border:none;
+    text-align:left;
+    width:100%;
+  }
+  .menu-card.money{background:linear-gradient(135deg, #2E9E67 0%, #1E6E45 100%);}
+  .menu-card:hover{transform:translateY(-3px);}
+  .menu-card .emoji{
+    width:52px; height:52px;
+    background:rgba(255,255,255,0.18);
+    border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; flex-shrink:0;
+  }
+  .menu-card .txt b{font-size:16.5px; font-family:'Baloo 2',sans-serif; display:block;}
+  .menu-card .txt span{font-size:12.5px; opacity:.85;}
+  .menu-card .arrow{margin-left:auto; font-size:20px; opacity:.8;}
+
+  /* ---------------- SUBPAGE HEADER ---------------- */
+  .sub-head{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .sub-head h2{font-size:19px; font-weight:800; color:var(--denim-deep);}
+  .sub-head p{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .back-btn{
+    background:var(--denim-pale); color:var(--denim-deep);
+    border:none; border-radius:10px; width:34px; height:34px;
+    font-size:16px; cursor:pointer; flex-shrink:0;
+  }
+
+  /* ---------------- MISSION CARD (Kelola Waktu form) ---------------- */
+  .mission-card{
+    background:var(--denim-pale);
+    border-radius:var(--radius-md);
+    padding:18px 16px;
+    margin-top:14px;
+    border:1.5px dashed var(--denim-bright);
+  }
+  .mission-tag{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--denim-deep);
+    font-size:11px; font-weight:800;
+    padding:3px 10px;
+    border-radius:999px;
+    margin-bottom:10px;
+    font-family:'Baloo 2',sans-serif;
+    letter-spacing:.03em;
+  }
+
+  label{
+    font-weight:700; font-size:12.5px; color:var(--denim-deep);
+    display:block; margin-top:12px; margin-bottom:5px;
+  }
+  label:first-child{margin-top:0;}
+  select, input[type="date"], input[type="time"], input[type="text"], textarea{
+    width:100%;
+    padding:11px 13px;
+    border:1.5px solid var(--gray-line);
+    background:#fff;
+    border-radius:12px;
+    font-size:14px;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:64px;}
+  select:focus, input:focus, textarea:focus{
+    outline:none; border-color:var(--denim-bright);
+    box-shadow:0 0 0 4px rgba(91,155,224,0.18);
+  }
+
+  .action-row{display:flex; gap:10px; margin-top:16px;}
+  .icon-action{
+    flex:1;
+    border:none;
+    padding:13px;
+    border-radius:14px;
+    font-size:18px;
+    font-weight:800;
+    cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .icon-action:hover{transform:translateY(-2px);}
+  .icon-cancel{background:#FCE4E1; color:var(--red);}
+  .icon-save{background:var(--green); color:#fff;}
+
+  .entry-list{margin-top:18px; display:flex; flex-direction:column; gap:10px;}
+  .entry-item{
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:14px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .entry-item .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+  .dot-done{background:var(--green);}
+  .dot-proc{background:var(--amber);}
+  .dot-none{background:var(--red);}
+  .entry-item .info{flex:1;}
+  .entry-item .info b{font-size:13.5px; display:block;}
+  .entry-item .info span{font-size:11.5px; color:var(--ink-soft);}
+  .entry-item .badge{
+    font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:999px;
+  }
+  .badge-done{background:#DFF6E9; color:var(--green);}
+  .badge-proc{background:#FEF1DA; color:var(--amber);}
+  .badge-none{background:#FCE4E1; color:var(--red);}
+
+  .chart-wrap{
+    margin-top:22px;
+    background:#fff;
+    border:1px solid var(--gray-line);
+    border-radius:var(--radius-md);
+    padding:16px;
+  }
+  .chart-wrap h3{font-size:14.5px; color:var(--denim-deep); margin-bottom:2px;}
+  .chart-wrap p{font-size:11.5px; color:var(--ink-soft); margin:0 0 10px;}
+
+  .empty-note{font-size:12.5px; color:var(--ink-soft); text-align:center; padding:14px 0;}
+
+  /* ---------------- KELOLA UANG TABS ---------------- */
+  .tab-switch{
+    display:flex;
+    background:var(--gray-line);
+    border-radius:14px;
+    padding:4px;
+    margin-top:14px;
+  }
+  .tab-switch button{
+    flex:1;
+    border:none;
+    background:transparent;
+    padding:10px;
+    border-radius:11px;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-family:'Baloo 2',sans-serif;
+  }
+  .tab-switch button.active{background:#fff; color:var(--denim-deep); box-shadow:var(--shadow-sm);}
+
+  .money-form{display:none; margin-top:14px;}
+  .money-form.active{display:block;}
+
+  .btn-submit{
+    width:100%;
+    margin-top:20px;
+    border:none;
+    padding:14px;
+    border-radius:14px;
+    font-weight:800;
+    font-size:15px;
+    font-family:'Baloo 2',sans-serif;
+    cursor:pointer;
+    color:#fff;
+  }
+  .btn-submit.expense{background:var(--red);}
+  .btn-submit.income{background:var(--green);}
+
+  .money-history{margin-top:20px;}
+  .money-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid var(--gray-line);
+    font-size:13px;
+  }
+  .money-row:last-child{border-bottom:none;}
+  .money-row .cat{font-weight:700; color:var(--ink);}
+  .money-row .desc{font-size:11.5px; color:var(--ink-soft); display:block;}
+  .money-row .amt.expense{color:var(--red); font-weight:800;}
+  .money-row .amt.income{color:var(--green); font-weight:800;}
+
+  .summary-strip{display:flex; gap:10px; margin-top:14px;}
+  .summary-box{flex:1; border-radius:var(--radius-md); padding:12px; text-align:center;}
+  .summary-box.exp{background:#FCE4E1;}
+  .summary-box.inc{background:#DFF6E9;}
+  .summary-box .lbl{font-size:11px; font-weight:700; color:var(--ink-soft);}
+  .summary-box .val{font-size:15px; font-weight:800; margin-top:2px;}
+  .summary-box.exp .val{color:var(--red);}
+  .summary-box.inc .val{color:var(--green);}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--denim-deep); color:#fff; padding:12px 20px;
+    border-radius:999px; font-size:13px; font-weight:600;
+    box-shadow:var(--shadow); z-index:99; display:none;
+    max-width:90vw; text-align:center;
+  }
+  .toast.show{display:block; animation:pop .25s ease;}
+  @keyframes pop{from{opacity:0; transform:translateX(-50%) translateY(8px);} to{opacity:1; transform:translateX(-50%) translateY(0);}}
+
+  @media (max-width:400px){
+    .card{padding:24px 16px;}
+    .brand-title{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="topbar" id="topbar">
+    <div class="greet">Halo, <span id="topbarUser">Kawan</span> 👋</div>
+    <button class="icon-btn" id="btnLogout" title="Keluar">⏻</button>
+  </div>
+
+  <!-- ================= LOGIN ================= -->
+  <section class="card active" id="page-login">
+    <div class="brand-mark">⏳</div>
+    <div class="brand-title">MyDay</div>
+    <div class="brand-sub">Kelola waktu &amp; uangmu, jadi lebih rapi tiap hari.</div>
+
+    <div class="auth-form">
+      <label for="loginUser">Nama Akun</label>
+      <input type="text" id="loginUser" placeholder="cth. budi_santoso" autocomplete="username">
+      <label for="loginPass">Kata Sandi</label>
+      <input type="password" id="loginPass" placeholder="Masukkan kata sandi" autocomplete="current-password">
+    </div>
+    <button class="btn-gold" id="btnLogin">Masuk</button>
+    <div class="switch-link">Belum punya akun? <a id="toRegister">Buat Akun</a></div>
+    <div class="auth-error" id="loginError"></div>
+    <div class="auth-success" id="loginSuccess"></div>
+  </section>
+
+  <!-- ================= REGISTER ================= -->
+  <section class="card" id="page-register">
+    <div class="brand-mark">✨</div>
+    <div class="brand-title">Buat Akun</div>
+    <div class="brand-sub">Satu akun untuk semua catatan waktu dan uangmu.</div>
+
+    <div class="auth-form">
+      <label for="regUser">Nama Akun</label>
+      <input type="text" id="regUser" placeholder="cth. budi_santoso">
+      <label for="regPass">Kata Sandi</label>
+      <input type="password" id="regPass" placeholder="Buat kata sandi">
+      <label for="regPass2">Ulangi Kata Sandi</label>
+      <input type="password" id="regPass2" placeholder="Ketik ulang kata sandi">
+    </div>
+    <button class="btn-gold" id="btnRegister">Daftar Sekarang</button>
+    <div class="switch-link">Sudah punya akun? <a id="toLogin">Masuk di sini</a></div>
+    <div class="auth-error" id="regError"></div>
+    <div class="auth-success" id="regSuccess"></div>
+  </section>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section class="card" id="page-dashboard">
+    <div class="dash-header">
+      <h2>Mau kelola apa hari ini? 🎯</h2>
+      <p>Pilih salah satu misi di bawah untuk mulai mencatat.</p>
+    </div>
+
+    <div class="menu-grid">
+      <button class="menu-card time" id="btnGoWaktu">
+        <div class="emoji">⏱️</div>
+        <div class="txt"><b>Kelola Waktu</b><span>Catat &amp; pantau aktivitas harianmu</span></div>
+        <div class="arrow">›</div>
+      </button>
+      <button class="menu-card money" id="btnGoUang">
+        <div class="emoji">💰</div>
+        <div class="txt"><b>Kelola Uang</b><span>Catat pemasukan &amp; pengeluaranmu</span></div>
+        <div class="arrow">›</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= KELOLA WAKTU ================= -->
+  <section class="card" id="page-waktu">
+    <div class="sub-head">
+      <button class="back-btn" id="btnBackWaktu1">←</button>
+      <div>
+        <h2>Kelola Waktu ⏱️</h2>
+        <p>Catat misi harianmu, kejar konsistensi!</p>
+      </div>
+    </div>
+
+    <div class="mission-card">
+      <span class="mission-tag">MISI BARU</span>
+
+      <label for="wTanggal">Tanggal</label>
+      <input type="date" id="wTanggal">
+
+      <label for="wJam">Jam</label>
+      <input type="time" id="wJam">
+
+      <label for="wKategori">Kategori</label>
+      <select id="wKategori">
+        <option value="">-- Pilih Kategori --</option>
+        <option>Tidur</option>
+        <option>Olahraga</option>
+        <option>Kuliah</option>
+        <option>Ngaji</option>
+        <option>Nderes</option>
+        <option>Sorogan</option>
+        <option>Nyuci</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+      <div id="wKategoriLainWrap" style="display:none;">
+        <label for="wKategoriLain">Tuliskan kategori kamu</label>
+        <input type="text" id="wKategoriLain" placeholder="cth. Belajar Bahasa Inggris">
+      </div>
+
+      <label for="wStatus">Status</label>
+      <select id="wStatus">
+        <option>Terlaksana</option>
+        <option>Proses</option>
+        <option>Belum Terlaksana</option>
+      </select>
+
+      <div class="action-row">
+        <button class="icon-action icon-cancel" id="btnWCancel" type="button">✕</button>
+        <button class="icon-action icon-save" id="btnWSave" type="button">✓</button>
+      </div>
+    </div>
+
+    <div class="entry-list" id="waktuList">
+      <div class="empty-note">Belum ada catatan. Yuk isi misi pertamamu hari ini!</div>
+    </div>
+
+    <div class="chart-wrap">
+      <h3>Kurva Konsistensi 📈</h3>
+      <p>Persentase aktivitas "Terlaksana" per hari</p>
+      <canvas id="waktuChart" height="180"></canvas>
+    </div>
+  </section>
+
+  <!-- ================= KELOLA UANG ================= -->
+  <section class="card" id="page-uang">
+    <div class="sub-head">
+      <button class="back-btn" id="btnBackUang1">←</button>
+      <div>
+        <h2>Kelola Uang 💰</h2>
+        <p>Pantau uang masuk dan keluar dengan rapi.</p>
+      </div>
+    </div>
+
+    <div class="summary-strip">
+      <div class="summary-box exp"><div class="lbl">Total Pengeluaran</div><div class="val" id="totalExpense">Rp0</div></div>
+      <div class="summary-box inc"><div class="lbl">Total Pemasukan</div><div class="val" id="totalIncome">Rp0</div></div>
+    </div>
+
+    <div class="tab-switch">
+      <button class="active" id="tabExpenseBtn">Pengeluaran</button>
+      <button id="tabIncomeBtn">Pemasukan</button>
+    </div>
+
+    <!-- PENGELUARAN -->
+    <div class="money-form active" id="formExpense">
+      <label for="eTanggal">Tanggal</label>
+      <input type="date" id="eTanggal">
+
+      <label for="eKategori">Kategori</label>
+      <select id="eKategori">
+        <option>Makanan</option>
+        <option>Minuman</option>
+        <option>Motor</option>
+        <option>Pulsa</option>
+        <option>Belanja</option>
+        <option>Kebutuhan</option>
+        <option>Lainnya</option>
+      </select>
+
+      <label for="eJumlah">Jumlah (Rp)</label>
+      <input type="text" id="eJumlah" inputmode="numeric" placeholder="cth. 25000">
+
+      <label for="eKet">Keterangan</label>
+      <textarea id="eKet" placeholder="cth. Makan siang di kantin"></textarea>
+
+      <button class="btn-submit expense" id="btnSaveExpense">Simpan Pengeluaran</button>
+    </div>
+
+    <!-- PEMASUKAN -->
+    <div class="money-form" id="formIncome">
+      <label for="iTanggal">Tanggal</label>
+      <input type="date" id="iTanggal">
+
+      <label for="iKategori">Kategori</label>
+      <select id="iKategori">
+        <option>Gaji</option>
+        <option>Kiriman</option>
+        <option>Hadiah</option>
+        <option>Lainnya</option>
+      </select>
+
+      <label for="iJumlah">Jumlah (Rp)</label>
+      <input type="text" id="iJumlah" inputmode="numeric" placeholder="cth. 500000">
+
+      <label for="iKet">Keterangan</label>
+      <textarea id="iKet" placeholder="cth. Kiriman dari orang tua"></textarea>
+
+      <button class="btn-submit income" id="btnSaveIncome">Simpan Pemasukan</button>
+    </div>
+
+    <div class="money-history" id="moneyHistory">
+      <div class="empty-note">Belum ada catatan keuangan.</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   KONFIGURASI PENTING
+   Ganti nilai SCRIPT_URL di bawah ini dengan URL Web App Google Apps
+   Script kamu (didapat setelah proses deploy, lihat panduan PDF/README).
+   ===================================================================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIBrYakAPywugVpr5zNKpcxH6_c98Cdm1JydHef0zp_PC2YY4StR7v2TO0tX92JhmO/exec";
+
+let currentUser = localStorage.getItem("myday_user") || null;
+
+/* ---------------------- HELPER: PANGGIL API ---------------------- */
+async function callAPI(payload) {
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }, // hindari CORS preflight
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* ---------------------- NAVIGASI HALAMAN ---------------------- */
+const allPages = ["page-login","page-register","page-dashboard","page-waktu","page-uang"];
+function goTo(pageId){
+  allPages.forEach(p => document.getElementById(p).classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+  const topbar = document.getElementById("topbar");
+  if (["page-dashboard","page-waktu","page-uang"].includes(pageId)) {
+    topbar.classList.add("show");
+    document.getElementById("topbarUser").textContent = currentUser || "Kawan";
+  } else {
+    topbar.classList.remove("show");
+  }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+document.getElementById("toRegister").addEventListener("click", ()=> goTo("page-register"));
+document.getElementById("toLogin").addEventListener("click", ()=> goTo("page-login"));
+document.getElementById("btnBackWaktu1").addEventListener("click", ()=> goTo("page-dashboard"));
+document.getElementById("btnBackUang1").addEventListener("click", ()=> goTo("page-dashboard"));
+document.getElementById("btnGoWaktu").addEventListener("click", ()=>{ goTo("page-waktu"); loadWaktu(); });
+document.getElementById("btnGoUang").addEventListener("click", ()=>{ goTo("page-uang"); loadUang(); });
+document.getElementById("btnLogout").addEventListener("click", ()=>{
+  currentUser = null;
+  localStorage.removeItem("myday_user");
+  goTo("page-login");
+});
+
+/* ---------------------- LOGIN ---------------------- */
+document.getElementById("btnLogin").addEventListener("click", async ()=>{
+  const username = document.getElementById("loginUser").value.trim();
+  const password = document.getElementById("loginPass").value;
+  const errBox = document.getElementById("loginError");
+  const okBox = document.getElementById("loginSuccess");
+  errBox.style.display = "none"; okBox.style.display = "none";
+
+  if (!username || !password) {
+    errBox.textContent = "Mohon isi nama akun dan kata sandi.";
+    errBox.style.display = "block";
+    return;
+  }
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = true; btn.textContent = "Memeriksa...";
+  try {
+    const res = await callAPI({ action:"login", username, password });
+    if (res.status === "success") {
+      currentUser = res.username || username;
+      localStorage.setItem("myday_user", currentUser);
+      okBox.textContent = "Login berhasil! Mengarahkan ke dashboard...";
+      okBox.style.display = "block";
+      setTimeout(()=> goTo("page-dashboard"), 500);
+    } else {
+      errBox.textContent = res.message || "Nama akun atau kata sandi salah.";
+      errBox.style.display = "block";
+    }
+  } catch(e) {
+    errBox.textContent = "Gagal terhubung ke server. Periksa SCRIPT_URL & koneksi internet.";
+    errBox.style.display = "block";
+  }
+  btn.disabled = false; btn.textContent = "Masuk";
+});
+
+/* ---------------------- REGISTER ---------------------- */
+document.getElementById("btnRegister").addEventListener("click", async ()=>{
+  const username = document.getElementById("regUser").value.trim();
+  const password = document.getElementById("regPass").value;
+  const password2 = document.getElementById("regPass2").value;
+  const errBox = document.getElementById("regError");
+  const okBox = document.getElementById("regSuccess");
+  errBox.style.display = "none"; okBox.style.display = "none";
+
+  if (!username || !password || !password2) {
+    errBox.textContent = "Mohon lengkapi semua kolom.";
+    errBox.style.display = "block"; return;
+  }
+  if (password !== password2) {
+    errBox.textContent = "Kata sandi dan ulangi kata sandi tidak sama.";
+    errBox.style.display = "block"; return;
+  }
+  const btn = document.getElementById("btnRegister");
+  btn.disabled = true; btn.textContent = "Mendaftarkan...";
+  try {
+    const res = await callAPI({ action:"register", username, password });
+    if (res.status === "success") {
+      okBox.textContent = "Akun berhasil dibuat! Silakan masuk.";
+      okBox.style.display = "block";
+      setTimeout(()=> goTo("page-login"), 900);
+    } else {
+      errBox.textContent = res.message || "Gagal membuat akun.";
+      errBox.style.display = "block";
+    }
+  } catch(e) {
+    errBox.textContent = "Gagal terhubung ke server. Periksa SCRIPT_URL & koneksi internet.";
+    errBox.style.display = "block";
+  }
+  btn.disabled = false; btn.textContent = "Daftar Sekarang";
+});
+
+/* ---------------------- KELOLA WAKTU ---------------------- */
+document.getElementById("wKategori").addEventListener("change", function(){
+  document.getElementById("wKategoriLainWrap").style.display = (this.value === "Lainnya") ? "block" : "none";
+});
+
+document.getElementById("btnWCancel").addEventListener("click", ()=>{
+  document.getElementById("wTanggal").value = "";
+  document.getElementById("wJam").value = "";
+  document.getElementById("wKategori").value = "";
+  document.getElementById("wKategoriLain").value = "";
+  document.getElementById("wKategoriLainWrap").style.display = "none";
+  document.getElementById("wStatus").value = "Terlaksana";
+});
+
+document.getElementById("btnWSave").addEventListener("click", async ()=>{
+  const tanggal = document.getElementById("wTanggal").value;
+  const jam = document.getElementById("wJam").value;
+  let kategori = document.getElementById("wKategori").value;
+  const kategoriLain = document.getElementById("wKategoriLain").value.trim();
+  const status = document.getElementById("wStatus").value;
+
+  if (kategori === "Lainnya") kategori = kategoriLain || "Lainnya";
+  if (!tanggal || !jam || !kategori) {
+    showToast("Mohon lengkapi tanggal, jam, dan kategori.");
+    return;
+  }
+  const btn = document.getElementById("btnWSave");
+  btn.disabled = true;
+  try {
+    await callAPI({ action:"addWaktu", username: currentUser, tanggal, jam, kategori, status });
+    showToast("Misi berhasil disimpan! 🎉");
+    document.getElementById("btnWCancel").click();
+    loadWaktu();
+  } catch(e) {
+    showToast("Gagal menyimpan. Coba lagi.");
+  }
+  btn.disabled = false;
+});
+
+let waktuChartInstance = null;
+async function loadWaktu(){
+  const listEl = document.getElementById("waktuList");
+  listEl.innerHTML = '<div class="empty-note">Memuat data...</div>';
+  try {
+    const res = await callAPI({ action:"getWaktu", username: currentUser });
+    const data = (res.data || []).sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+
+    if (data.length === 0) {
+      listEl.innerHTML = '<div class="empty-note">Belum ada catatan. Yuk isi misi pertamamu hari ini!</div>';
+    } else {
+      listEl.innerHTML = "";
+      data.slice(0,15).forEach(item=>{
+        const dotClass = item.status === "Terlaksana" ? "dot-done" : (item.status === "Proses" ? "dot-proc" : "dot-none");
+        const badgeClass = item.status === "Terlaksana" ? "badge-done" : (item.status === "Proses" ? "badge-proc" : "badge-none");
+        const div = document.createElement("div");
+        div.className = "entry-item";
+        div.innerHTML = `
+          <span class="dot ${dotClass}"></span>
+          <div class="info">
+            <b>${item.kategori}</b>
+            <span>${formatTanggal(item.tanggal)} · ${item.jam}</span>
+          </div>
+          <span class="badge ${badgeClass}">${item.status}</span>`;
+        listEl.appendChild(div);
+      });
+    }
+
+    renderConsistencyChart(res.data || []);
+  } catch(e) {
+    listEl.innerHTML = '<div class="empty-note">Gagal memuat data. Periksa koneksi.</div>';
+  }
+}
+
+function formatTanggal(tgl){
+  try {
+    const d = new Date(tgl);
+    return d.toLocaleDateString("id-ID", { day:"numeric", month:"short" });
+  } catch(e){ return tgl; }
+}
+
+function renderConsistencyChart(data){
+  const grouped = {};
+  data.forEach(item=>{
+    const key = String(item.tanggal).slice(0,10);
+    if (!grouped[key]) grouped[key] = { total:0, done:0 };
+    grouped[key].total++;
+    if (item.status === "Terlaksana") grouped[key].done++;
+  });
+  const dates = Object.keys(grouped).sort();
+  const percentages = dates.map(d => Math.round((grouped[d].done / grouped[d].total) * 100));
+  const labels = dates.map(d => formatTanggal(d));
+
+  const ctx = document.getElementById("waktuChart").getContext("2d");
+  if (waktuChartInstance) waktuChartInstance.destroy();
+  waktuChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels.length ? labels : ["Belum ada data"],
+      datasets: [{
+        label: "% Terlaksana",
+        data: percentages.length ? percentages : [0],
+        borderColor: "#2F5C8F",
+        backgroundColor: "rgba(91,155,224,0.18)",
+        fill: true,
+        tension: 0.35,
+        pointBackgroundColor: "#F5A623",
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ min:0, max:100, ticks:{ callback:(v)=> v+"%" } } }
+    }
+  });
+}
+
+/* ---------------------- KELOLA UANG ---------------------- */
+document.getElementById("tabExpenseBtn").addEventListener("click", ()=>{
+  document.getElementById("tabExpenseBtn").classList.add("active");
+  document.getElementById("tabIncomeBtn").classList.remove("active");
+  document.getElementById("formExpense").classList.add("active");
+  document.getElementById("formIncome").classList.remove("active");
+});
+document.getElementById("tabIncomeBtn").addEventListener("click", ()=>{
+  document.getElementById("tabIncomeBtn").classList.add("active");
+  document.getElementById("tabExpenseBtn").classList.remove("active");
+  document.getElementById("formIncome").classList.add("active");
+  document.getElementById("formExpense").classList.remove("active");
+});
+
+// Validasi input jumlah: hanya angka yang diterima
+function onlyDigits(el){
+  el.addEventListener("input", ()=>{
+    el.value = el.value.replace(/[^0-9]/g, "");
+  });
+}
+onlyDigits(document.getElementById("eJumlah"));
+onlyDigits(document.getElementById("iJumlah"));
+
+document.getElementById("btnSaveExpense").addEventListener("click", async ()=>{
+  const tanggal = document.getElementById("eTanggal").value;
+  const kategori = document.getElementById("eKategori").value;
+  const jumlah = document.getElementById("eJumlah").value;
+  const keterangan = document.getElementById("eKet").value.trim();
+
+  if (!tanggal || !kategori || !jumlah) {
+    showToast("Mohon lengkapi tanggal, kategori, dan jumlah.");
+    return;
+  }
+  const btn = document.getElementById("btnSaveExpense");
+  btn.disabled = true; btn.textContent = "Menyimpan...";
+  try {
+    await callAPI({ action:"addUang", username: currentUser, tipe:"Pengeluaran", tanggal, kategori, jumlah, keterangan });
+    showToast("Pengeluaran tersimpan! 💸");
+    document.getElementById("eTanggal").value = "";
+    document.getElementById("eJumlah").value = "";
+    document.getElementById("eKet").value = "";
+    loadUang();
+  } catch(e) { showToast("Gagal menyimpan. Coba lagi."); }
+  btn.disabled = false; btn.textContent = "Simpan Pengeluaran";
+});
+
+document.getElementById("btnSaveIncome").addEventListener("click", async ()=>{
+  const tanggal = document.getElementById("iTanggal").value;
+  const kategori = document.getElementById("iKategori").value;
+  const jumlah = document.getElementById("iJumlah").value;
+  const keterangan = document.getElementById("iKet").value.trim();
+
+  if (!tanggal || !kategori || !jumlah) {
+    showToast("Mohon lengkapi tanggal, kategori, dan jumlah.");
+    return;
+  }
+  const btn = document.getElementById("btnSaveIncome");
+  btn.disabled = true; btn.textContent = "Menyimpan...";
+  try {
+    await callAPI({ action:"addUang", username: currentUser, tipe:"Pemasukan", tanggal, kategori, jumlah, keterangan });
+    showToast("Pemasukan tersimpan! 💰");
+    document.getElementById("iTanggal").value = "";
+    document.getElementById("iJumlah").value = "";
+    document.getElementById("iKet").value = "";
+    loadUang();
+  } catch(e) { showToast("Gagal menyimpan. Coba lagi."); }
+  btn.disabled = false; btn.textContent = "Simpan Pemasukan";
+});
+
+function formatRupiah(angka){
+  const n = Number(angka) || 0;
+  return "Rp" + n.toLocaleString("id-ID");
+}
+
+async function loadUang(){
+  const histEl = document.getElementById("moneyHistory");
+  histEl.innerHTML = '<div class="empty-note">Memuat data...</div>';
+  try {
+    const res = await callAPI({ action:"getUang", username: currentUser });
+    const data = (res.data || []).sort((a,b)=> new Date(b.tanggal) - new Date(a.tanggal));
+
+    let totalExpense = 0, totalIncome = 0;
+    data.forEach(item=>{
+      const n = Number(item.jumlah) || 0;
+      if (item.tipe === "Pengeluaran") totalExpense += n; else totalIncome += n;
+    });
+    document.getElementById("totalExpense").textContent = formatRupiah(totalExpense);
+    document.getElementById("totalIncome").textContent = formatRupiah(totalIncome);
+
+    if (data.length === 0) {
+      histEl.innerHTML = '<div class="empty-note">Belum ada catatan keuangan.</div>';
+      return;
+    }
+    histEl.innerHTML = "";
+    data.slice(0,20).forEach(item=>{
+      const amtClass = item.tipe === "Pengeluaran" ? "expense" : "income";
+      const sign = item.tipe === "Pengeluaran" ? "-" : "+";
+      const row = document.createElement("div");
+      row.className = "money-row";
+      row.innerHTML = `
+        <div>
+          <span class="cat">${item.kategori}</span>
+          <span class="desc">${formatTanggal(item.tanggal)}${item.keterangan ? " · " + item.keterangan : ""}</span>
+        </div>
+        <span class="amt ${amtClass}">${sign}${formatRupiah(item.jumlah)}</span>`;
+      histEl.appendChild(row);
+    });
+  } catch(e) {
+    histEl.innerHTML = '<div class="empty-note">Gagal memuat data. Periksa koneksi.</div>';
+  }
+}
+
+/* ---------------------- CEK SESI LOGIN SAAT DIBUKA ---------------------- */
+if (currentUser) {
+  goTo("page-dashboard");
+} else {
+  goTo("page-login");
+}
+</script>
+</body>
+</html>
