@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyDay — Manajemen Waktu &amp; Keuangan</title>
+<title>MyDay — Waktu, Ibadah &amp; Uang</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -25,6 +25,7 @@
     --green:#3CB878;
     --amber:#F2A93B;
     --red:#E5594F;
+    --purple:#7B5FD9;
     --radius-lg:22px;
     --radius-md:16px;
     --radius-sm:10px;
@@ -50,7 +51,6 @@
 
   .app{width:100%; max-width:460px; display:flex; flex-direction:column; gap:16px;}
 
-  /* ---------------- TOPBAR (dashboard & subpages) ---------------- */
   .topbar{
     display:none;
     align-items:center;
@@ -71,7 +71,6 @@
     box-shadow:var(--shadow-sm);
   }
 
-  /* ---------------- GENERIC CARD / PAGE ---------------- */
   .card{
     background:var(--card);
     border-radius:var(--radius-lg);
@@ -85,7 +84,6 @@
   .card.active{display:flex;}
   @keyframes rise{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
 
-  /* ---------------- COVER / AUTH ---------------- */
   #page-login, #page-register{
     align-items:center;
     text-align:center;
@@ -183,155 +181,118 @@
   .switch-link a:hover{text-decoration:underline;}
 
   .auth-error{
-    z-index:1;
-    margin-top:12px;
-    font-size:12.5px;
-    font-weight:600;
-    color:#FFD3CE;
-    background:rgba(229,89,79,0.25);
-    border:1px solid rgba(229,89,79,0.5);
-    padding:8px 12px;
-    border-radius:10px;
-    display:none;
+    z-index:1; margin-top:12px; font-size:12.5px; font-weight:600; color:#FFD3CE;
+    background:rgba(229,89,79,0.25); border:1px solid rgba(229,89,79,0.5);
+    padding:8px 12px; border-radius:10px; display:none;
   }
   .auth-success{
-    z-index:1;
-    margin-top:12px;
-    font-size:12.5px;
-    font-weight:600;
-    color:#D6FFEA;
-    background:rgba(60,184,120,0.25);
-    border:1px solid rgba(60,184,120,0.5);
-    padding:8px 12px;
-    border-radius:10px;
-    display:none;
+    z-index:1; margin-top:12px; font-size:12.5px; font-weight:600; color:#D6FFEA;
+    background:rgba(60,184,120,0.25); border:1px solid rgba(60,184,120,0.5);
+    padding:8px 12px; border-radius:10px; display:none;
   }
 
-  /* ---------------- DASHBOARD ---------------- */
   #page-dashboard{padding:26px 20px;}
   .dash-header{text-align:center; margin-bottom:6px;}
   .dash-header h2{font-size:20px; font-weight:800; color:var(--denim-deep);}
   .dash-header p{font-size:13px; color:var(--ink-soft); margin-top:4px;}
 
-  .streak-strip{
-    display:flex;
-    gap:10px;
-    margin:16px 0 6px;
-  }
-  .streak-box{
-    flex:1;
-    background:var(--denim-pale);
+  .lock-banner{
+    display:none;
+    background:linear-gradient(135deg, var(--red), #B23A32);
+    color:#fff;
     border-radius:var(--radius-md);
-    padding:12px 10px;
+    padding:14px 16px;
+    margin-top:10px;
     text-align:center;
+    box-shadow:var(--shadow-sm);
   }
-  .streak-box .num{font-size:19px; font-weight:800; color:var(--denim-deep); font-family:'Baloo 2',sans-serif;}
-  .streak-box .lbl{font-size:11px; color:var(--ink-soft); font-weight:600; margin-top:2px;}
+  .lock-banner.show{display:block;}
+  .lock-banner p{font-size:12.5px; margin:0 0 10px; font-weight:600; line-height:1.4;}
+  .lock-banner button{
+    background:#fff; color:var(--red); border:none;
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    padding:10px 18px; border-radius:999px; font-size:13.5px; cursor:pointer;
+  }
 
   .menu-grid{display:flex; flex-direction:column; gap:14px; margin-top:16px;}
   .menu-card{
-    display:flex;
-    align-items:center;
-    gap:16px;
+    display:flex; align-items:center; gap:16px;
     background:linear-gradient(135deg, var(--denim) 0%, var(--denim-deep) 100%);
-    color:#fff;
-    border-radius:var(--radius-lg);
-    padding:20px;
-    cursor:pointer;
-    box-shadow:var(--shadow-sm);
-    transition:transform .18s ease;
-    border:none;
-    text-align:left;
-    width:100%;
+    color:#fff; border-radius:var(--radius-lg); padding:20px; cursor:pointer;
+    box-shadow:var(--shadow-sm); transition:transform .18s ease, opacity .18s ease;
+    border:none; text-align:left; width:100%;
   }
   .menu-card.money{background:linear-gradient(135deg, #2E9E67 0%, #1E6E45 100%);}
+  .menu-card.ibadah{background:linear-gradient(135deg, #7B5FD9 0%, #4B3592 100%);}
   .menu-card:hover{transform:translateY(-3px);}
+  .menu-card:disabled{opacity:.45; cursor:not-allowed; transform:none;}
   .menu-card .emoji{
-    width:52px; height:52px;
-    background:rgba(255,255,255,0.18);
-    border-radius:16px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:26px; flex-shrink:0;
+    width:52px; height:52px; background:rgba(255,255,255,0.18); border-radius:16px;
+    display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0;
   }
   .menu-card .txt b{font-size:16.5px; font-family:'Baloo 2',sans-serif; display:block;}
   .menu-card .txt span{font-size:12.5px; opacity:.85;}
   .menu-card .arrow{margin-left:auto; font-size:20px; opacity:.8;}
 
-  /* ---------------- SUBPAGE HEADER ---------------- */
   .sub-head{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
   .sub-head h2{font-size:19px; font-weight:800; color:var(--denim-deep);}
   .sub-head p{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
   .back-btn{
     background:var(--denim-pale); color:var(--denim-deep);
     border:none; border-radius:10px; width:34px; height:34px;
-    font-size:16px; cursor:pointer; flex-shrink:0;
+    font-size:17px; cursor:pointer; flex-shrink:0;
   }
 
-  /* ---------------- MISSION CARD (Kelola Waktu form) ---------------- */
   .mission-card{
-    background:var(--denim-pale);
-    border-radius:var(--radius-md);
-    padding:18px 16px;
-    margin-top:14px;
-    border:1.5px dashed var(--denim-bright);
+    background:var(--denim-pale); border-radius:var(--radius-md); padding:18px 16px;
+    margin-top:14px; border:1.5px dashed var(--denim-bright);
   }
+  .mission-card.ibadah-card{border-color:var(--purple); background:#F1EDFC;}
   .mission-tag{
-    display:inline-block;
-    background:var(--gold);
-    color:var(--denim-deep);
-    font-size:11px; font-weight:800;
-    padding:3px 10px;
-    border-radius:999px;
-    margin-bottom:10px;
-    font-family:'Baloo 2',sans-serif;
-    letter-spacing:.03em;
+    display:inline-block; background:var(--gold); color:var(--denim-deep);
+    font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px;
+    margin-bottom:10px; font-family:'Baloo 2',sans-serif; letter-spacing:.03em;
   }
 
-  label{
-    font-weight:700; font-size:12.5px; color:var(--denim-deep);
-    display:block; margin-top:12px; margin-bottom:5px;
-  }
+  label{font-weight:700; font-size:12.5px; color:var(--denim-deep); display:block; margin-top:12px; margin-bottom:5px;}
   label:first-child{margin-top:0;}
   select, input[type="date"], input[type="time"], input[type="text"], textarea{
-    width:100%;
-    padding:11px 13px;
-    border:1.5px solid var(--gray-line);
-    background:#fff;
-    border-radius:12px;
-    font-size:14px;
-    font-family:'Inter', sans-serif;
-    color:var(--ink);
+    width:100%; padding:11px 13px; border:1.5px solid var(--gray-line); background:#fff;
+    border-radius:12px; font-size:14px; font-family:'Inter', sans-serif; color:var(--ink);
   }
+  input:disabled, select:disabled{background:#F0F2F5; color:var(--ink-soft);}
   textarea{resize:vertical; min-height:64px;}
   select:focus, input:focus, textarea:focus{
-    outline:none; border-color:var(--denim-bright);
-    box-shadow:0 0 0 4px rgba(91,155,224,0.18);
+    outline:none; border-color:var(--denim-bright); box-shadow:0 0 0 4px rgba(91,155,224,0.18);
+  }
+
+  .checkbox-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+  .checkbox-pill{
+    display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--gray-line);
+    border-radius:999px; padding:8px 12px; font-size:12.5px; font-weight:600; cursor:pointer;
+  }
+  .checkbox-pill input{width:auto; padding:0;}
+  .checkbox-pill.checked{border-color:var(--purple); background:#EDE7FB; color:var(--purple);}
+
+  .counter-note{
+    margin-top:12px; font-size:12px; font-weight:700; color:var(--purple);
+    background:#F1EDFC; padding:8px 12px; border-radius:10px; text-align:center;
   }
 
   .action-row{display:flex; gap:10px; margin-top:16px;}
   .icon-action{
-    flex:1;
-    border:none;
-    padding:13px;
-    border-radius:14px;
-    font-size:18px;
-    font-weight:800;
-    cursor:pointer;
-    transition:transform .15s ease;
+    flex:1; border:none; padding:13px; border-radius:14px; font-size:18px; font-weight:800;
+    cursor:pointer; transition:transform .15s ease;
   }
   .icon-action:hover{transform:translateY(-2px);}
   .icon-cancel{background:#FCE4E1; color:var(--red);}
   .icon-save{background:var(--green); color:#fff;}
+  .icon-save:disabled{opacity:.5; cursor:not-allowed; transform:none;}
 
   .entry-list{margin-top:18px; display:flex; flex-direction:column; gap:10px;}
   .entry-item{
-    background:#fff;
-    border:1px solid var(--gray-line);
-    border-radius:14px;
-    padding:12px 14px;
-    display:flex;
-    align-items:center;
-    gap:10px;
+    background:#fff; border:1px solid var(--gray-line); border-radius:14px; padding:12px 14px;
+    display:flex; align-items:center; gap:10px;
   }
   .entry-item .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
   .dot-done{background:var(--green);}
@@ -340,44 +301,24 @@
   .entry-item .info{flex:1;}
   .entry-item .info b{font-size:13.5px; display:block;}
   .entry-item .info span{font-size:11.5px; color:var(--ink-soft);}
-  .entry-item .badge{
-    font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:999px;
-  }
+  .entry-item .badge{font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:999px;}
   .badge-done{background:#DFF6E9; color:var(--green);}
   .badge-proc{background:#FEF1DA; color:var(--amber);}
   .badge-none{background:#FCE4E1; color:var(--red);}
 
   .chart-wrap{
-    margin-top:22px;
-    background:#fff;
-    border:1px solid var(--gray-line);
-    border-radius:var(--radius-md);
-    padding:16px;
+    margin-top:22px; background:#fff; border:1px solid var(--gray-line);
+    border-radius:var(--radius-md); padding:16px;
   }
   .chart-wrap h3{font-size:14.5px; color:var(--denim-deep); margin-bottom:2px;}
   .chart-wrap p{font-size:11.5px; color:var(--ink-soft); margin:0 0 10px;}
 
   .empty-note{font-size:12.5px; color:var(--ink-soft); text-align:center; padding:14px 0;}
 
-  /* ---------------- KELOLA UANG TABS ---------------- */
-  .tab-switch{
-    display:flex;
-    background:var(--gray-line);
-    border-radius:14px;
-    padding:4px;
-    margin-top:14px;
-  }
+  .tab-switch{display:flex; background:var(--gray-line); border-radius:14px; padding:4px; margin-top:14px;}
   .tab-switch button{
-    flex:1;
-    border:none;
-    background:transparent;
-    padding:10px;
-    border-radius:11px;
-    font-weight:700;
-    font-size:13.5px;
-    color:var(--ink-soft);
-    cursor:pointer;
-    font-family:'Baloo 2',sans-serif;
+    flex:1; border:none; background:transparent; padding:10px; border-radius:11px;
+    font-weight:700; font-size:13.5px; color:var(--ink-soft); cursor:pointer; font-family:'Baloo 2',sans-serif;
   }
   .tab-switch button.active{background:#fff; color:var(--denim-deep); box-shadow:var(--shadow-sm);}
 
@@ -385,16 +326,8 @@
   .money-form.active{display:block;}
 
   .btn-submit{
-    width:100%;
-    margin-top:20px;
-    border:none;
-    padding:14px;
-    border-radius:14px;
-    font-weight:800;
-    font-size:15px;
-    font-family:'Baloo 2',sans-serif;
-    cursor:pointer;
-    color:#fff;
+    width:100%; margin-top:20px; border:none; padding:14px; border-radius:14px;
+    font-weight:800; font-size:15px; font-family:'Baloo 2',sans-serif; cursor:pointer; color:#fff;
   }
   .btn-submit.expense{background:var(--red);}
   .btn-submit.income{background:var(--green);}
@@ -402,8 +335,7 @@
   .money-history{margin-top:20px;}
   .money-row{
     display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0; border-bottom:1px solid var(--gray-line);
-    font-size:13px;
+    padding:10px 0; border-bottom:1px solid var(--gray-line); font-size:13px;
   }
   .money-row:last-child{border-bottom:none;}
   .money-row .cat{font-weight:700; color:var(--ink);}
@@ -424,11 +356,32 @@
     position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
     background:var(--denim-deep); color:#fff; padding:12px 20px;
     border-radius:999px; font-size:13px; font-weight:600;
-    box-shadow:var(--shadow); z-index:99; display:none;
-    max-width:90vw; text-align:center;
+    box-shadow:var(--shadow); z-index:99; display:none; max-width:90vw; text-align:center;
   }
   .toast.show{display:block; animation:pop .25s ease;}
   @keyframes pop{from{opacity:0; transform:translateX(-50%) translateY(8px);} to{opacity:1; transform:translateX(-50%) translateY(0);}}
+
+  /* -------- MODAL PERJANJIAN -------- */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(20,30,45,0.6);
+    align-items:center; justify-content:center; z-index:200; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:#fff; border-radius:var(--radius-lg); padding:28px 22px; max-width:360px;
+    width:100%; text-align:center; box-shadow:var(--shadow);
+  }
+  .modal-box .modal-emoji{font-size:38px; margin-bottom:10px;}
+  .modal-box h3{font-size:17px; color:var(--denim-deep); margin:0 0 8px;}
+  .modal-box p{font-size:13.5px; color:var(--ink-soft); margin:0 0 20px; line-height:1.5;}
+  .modal-actions{display:flex; gap:10px;}
+  .modal-actions button{
+    flex:1; border:none; padding:12px; border-radius:14px; font-weight:800;
+    font-size:13.5px; cursor:pointer; font-family:'Baloo 2',sans-serif;
+  }
+  .modal-yes{background:var(--green); color:#fff;}
+  .modal-no{background:#FCE4E1; color:var(--red);}
+  .modal-no:disabled{opacity:.5; cursor:not-allowed;}
 
   @media (max-width:400px){
     .card{padding:24px 16px;}
@@ -449,7 +402,7 @@
   <section class="card active" id="page-login">
     <div class="brand-mark">⏳</div>
     <div class="brand-title">keseharianmu</div>
-    <div class="brand-sub">Kelola waktu &amp; uangmu, biar proper.</div>
+    <div class="brand-sub">Kelola ibadah, waktu &amp; uangmu, biar proper.</div>
 
     <div class="auth-form">
       <label for="loginUser">Nama Akun</label>
@@ -467,7 +420,7 @@
   <section class="card" id="page-register">
     <div class="brand-mark">✨</div>
     <div class="brand-title">Buat Akun</div>
-    <div class="brand-sub">Satu akun untuk semua catatan waktu dan uangmu.</div>
+    <div class="brand-sub">Satu akun untuk semua catatan ibadah, waktu dan uangmu.</div>
 
     <div class="auth-form">
       <label for="regUser">Nama Akun</label>
@@ -490,7 +443,17 @@
       <p>Pilih salah satu misi di bawah untuk mulai mencatat.</p>
     </div>
 
+    <div class="lock-banner" id="lockBanner">
+      <p>Akun kamu terkunci karena kemarin tidak ada catatan sholat wajib sama sekali.</p>
+      <button id="btnHarusSholat">🙏 Harus Sholat!</button>
+    </div>
+
     <div class="menu-grid">
+      <button class="menu-card ibadah" id="btnGoIbadah">
+        <div class="emoji">🕌</div>
+        <div class="txt"><b>Ibadah</b><span>Catat sholat wajib &amp; sunnahmu</span></div>
+        <div class="arrow">›</div>
+      </button>
       <button class="menu-card time" id="btnGoWaktu">
         <div class="emoji">⏱️</div>
         <div class="txt"><b>Kelola Waktu</b><span>Catat &amp; pantau aktivitas harianmu</span></div>
@@ -502,12 +465,67 @@
         <div class="arrow">›</div>
       </button>
     </div>
+
+    <div class="chart-wrap">
+      <h3>Kurva Presensi Ibadah 🕌</h3>
+      <p>% sholat wajib Sudah/Halangan per hari, 14 hari terakhir</p>
+      <canvas id="ibadahChart" height="180"></canvas>
+    </div>
+  </section>
+
+  <!-- ================= IBADAH ================= -->
+  <section class="card" id="page-ibadah">
+    <div class="sub-head">
+      <button class="back-btn" id="btnBackIbadah">🔙</button>
+      <div>
+        <h2>Ibadah 🕌</h2>
+        <p id="ibadahTanggalLabel">-</p>
+      </div>
+    </div>
+
+    <div class="mission-card ibadah-card">
+      <span class="mission-tag" style="background:var(--purple); color:#fff;">SHOLAT WAJIB</span>
+
+      <label for="ibWajib">Pilih Sholat</label>
+      <select id="ibWajib">
+        <option value="">-- Pilih Sholat Wajib --</option>
+        <option value="Subuh">Subuh</option>
+        <option value="Dhuhur">Dhuhur</option>
+        <option value="Asar">Asar</option>
+        <option value="Maghrib">Maghrib</option>
+        <option value="Isya">Isya</option>
+      </select>
+
+      <label for="ibJam">Jam (otomatis)</label>
+      <input type="text" id="ibJam" disabled placeholder="-">
+
+      <div id="ibSunnahWrap" style="display:none;">
+        <label>Sholat Sunnah (boleh pilih lebih dari satu)</label>
+        <div class="checkbox-row" id="ibSunnahRow"></div>
+      </div>
+
+      <label for="ibStatus">Status</label>
+      <select id="ibStatus">
+        <option value="Sudah">Sudah</option>
+        <option value="Belum">Belum</option>
+        <option value="Halangan">Halangan (Uzur)</option>
+      </select>
+
+      <div class="action-row">
+        <button class="icon-action icon-cancel" id="btnIbCancel" type="button">✕</button>
+        <button class="icon-action icon-save" id="btnIbSave" type="button">✓</button>
+      </div>
+
+      <div class="counter-note" id="ibCounter">0 dari 5 sholat wajib tercatat hari ini</div>
+    </div>
+
+    <div class="entry-list" id="ibadahList"></div>
   </section>
 
   <!-- ================= KELOLA WAKTU ================= -->
   <section class="card" id="page-waktu">
     <div class="sub-head">
-      <button class="back-btn" id="btnBackWaktu1">←</button>
+      <button class="back-btn" id="btnBackWaktu1">🔙</button>
       <div>
         <h2>Kelola Waktu ⏱️</h2>
         <p>Catat misi harianmu, kejar konsistensi!</p>
@@ -517,8 +535,8 @@
     <div class="mission-card">
       <span class="mission-tag">MISI BARU</span>
 
-      <label for="wTanggal">Tanggal</label>
-      <input type="date" id="wTanggal">
+      <label for="wTanggal">Tanggal (otomatis hari ini)</label>
+      <input type="date" id="wTanggal" disabled>
 
       <label for="wJam">Jam</label>
       <input type="time" id="wJam">
@@ -527,8 +545,11 @@
       <select id="wKategori">
         <option value="">-- Pilih Kategori --</option>
         <option>Tidur</option>
-        <option>Olahraga</option>
+        <option>Sarapan</option>
+        <option>Makan Siang</option>
+        <option>Makan Malam</option>
         <option>Kuliah</option>
+        <option>Tugas</option>
         <option>Ngaji</option>
         <option>Nderes</option>
         <option>Sorogan</option>
@@ -536,15 +557,14 @@
         <option value="Lainnya">Lainnya</option>
       </select>
       <div id="wKategoriLainWrap" style="display:none;">
-        <label for="wKategoriLain">Tuliskan kategori kamu</label>
+        <label for="wKategoriLain">Tuliskan kegiatan kamu</label>
         <input type="text" id="wKategoriLain" placeholder="cth. Belajar Bahasa Inggris">
       </div>
 
       <label for="wStatus">Status</label>
       <select id="wStatus">
-        <option>Terlaksana</option>
-        <option>Proses</option>
-        <option>Belum Terlaksana</option>
+        <option>Sudah</option>
+        <option>Belum</option>
       </select>
 
       <div class="action-row">
@@ -559,7 +579,7 @@
 
     <div class="chart-wrap">
       <h3>Kurva Konsistensi 📈</h3>
-      <p>Persentase aktivitas "Terlaksana" per hari</p>
+      <p>Persentase aktivitas "Sudah" per hari</p>
       <canvas id="waktuChart" height="180"></canvas>
     </div>
   </section>
@@ -567,7 +587,7 @@
   <!-- ================= KELOLA UANG ================= -->
   <section class="card" id="page-uang">
     <div class="sub-head">
-      <button class="back-btn" id="btnBackUang1">←</button>
+      <button class="back-btn" id="btnBackUang1">🔙</button>
       <div>
         <h2>Kelola Uang 💰</h2>
         <p>Pantau uang masuk dan keluar dengan rapi.</p>
@@ -584,7 +604,6 @@
       <button id="tabIncomeBtn">Pemasukan</button>
     </div>
 
-    <!-- PENGELUARAN -->
     <div class="money-form active" id="formExpense">
       <label for="eTanggal">Tanggal</label>
       <input type="date" id="eTanggal">
@@ -601,7 +620,7 @@
       </select>
 
       <label for="eJumlah">Jumlah (Rp)</label>
-      <input type="text" id="eJumlah" inputmode="numeric" placeholder="cth. 25000">
+      <input type="text" id="eJumlah" inputmode="numeric" placeholder="cth. 25.000">
 
       <label for="eKet">Keterangan</label>
       <textarea id="eKet" placeholder="cth. Makan siang di kantin"></textarea>
@@ -609,7 +628,6 @@
       <button class="btn-submit expense" id="btnSaveExpense">Simpan Pengeluaran</button>
     </div>
 
-    <!-- PEMASUKAN -->
     <div class="money-form" id="formIncome">
       <label for="iTanggal">Tanggal</label>
       <input type="date" id="iTanggal">
@@ -623,7 +641,7 @@
       </select>
 
       <label for="iJumlah">Jumlah (Rp)</label>
-      <input type="text" id="iJumlah" inputmode="numeric" placeholder="cth. 500000">
+      <input type="text" id="iJumlah" inputmode="numeric" placeholder="cth. 500.000">
 
       <label for="iKet">Keterangan</label>
       <textarea id="iKet" placeholder="cth. Kiriman dari orang tua"></textarea>
@@ -634,27 +652,50 @@
     <div class="money-history" id="moneyHistory">
       <div class="empty-note">Belum ada catatan keuangan.</div>
     </div>
+
+    <div class="chart-wrap">
+      <h3>Kurva Keuangan 📊</h3>
+      <p>Pengeluaran vs Pemasukan per hari</p>
+      <canvas id="uangChart" height="200"></canvas>
+    </div>
   </section>
 
+</div>
+
+<!-- ================= MODAL PERJANJIAN ================= -->
+<div class="modal-overlay" id="modalPerjanjian">
+  <div class="modal-box">
+    <div class="modal-emoji">🙏</div>
+    <h3>Perjanjian</h3>
+    <p>"Saya berjanji akan sholat"</p>
+    <div class="modal-actions">
+      <button class="modal-no" id="btnTidakSiap">❌ Tidak Siap</button>
+      <button class="modal-yes" id="btnYaSiap">✅ Ya, Saya Siap</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* =====================================================================
-   KONFIGURASI PENTING
-   Ganti nilai SCRIPT_URL di bawah ini dengan URL Web App Google Apps
-   Script kamu (didapat setelah proses deploy, lihat panduan PDF/README).
-   ===================================================================== */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwO4fOnVmCWKSLI0PfxwCnBD-8xTQ6ws-7inAfu82fWOL4Kw6iy5o-YJWz1rFMj_5to3Q/exec";
 
 let currentUser = localStorage.getItem("myday_user") || null;
+let isLocked = false;
 
-/* ---------------------- HELPER: PANGGIL API ---------------------- */
+const WAJIB_TIMES = { "Subuh":"05:00", "Dhuhur":"12:00", "Asar":"15:00", "Maghrib":"18:00", "Isya":"19:00" };
+const SUNNAH_MAP = {
+  "Subuh":   ["Qobliyah","Al Waqiah"],
+  "Dhuhur":  ["Qobliyah","Ba'diyah"],
+  "Asar":    ["Qobliyah"],
+  "Maghrib": ["Ba'diyah"],
+  "Isya":    ["Ba'diyah","Al Mulk"]
+};
+
 async function callAPI(payload) {
   const res = await fetch(SCRIPT_URL, {
     method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" }, // hindari CORS preflight
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload)
   });
   return res.json();
@@ -667,13 +708,20 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 2600);
 }
 
+function todayISO(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
 /* ---------------------- NAVIGASI HALAMAN ---------------------- */
-const allPages = ["page-login","page-register","page-dashboard","page-waktu","page-uang"];
+const allPages = ["page-login","page-register","page-dashboard","page-waktu","page-uang","page-ibadah"];
 function goTo(pageId){
   allPages.forEach(p => document.getElementById(p).classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
   const topbar = document.getElementById("topbar");
-  if (["page-dashboard","page-waktu","page-uang"].includes(pageId)) {
+  if (["page-dashboard","page-waktu","page-uang","page-ibadah"].includes(pageId)) {
     topbar.classList.add("show");
     document.getElementById("topbarUser").textContent = currentUser || "Kawan";
   } else {
@@ -686,8 +734,20 @@ document.getElementById("toRegister").addEventListener("click", ()=> goTo("page-
 document.getElementById("toLogin").addEventListener("click", ()=> goTo("page-login"));
 document.getElementById("btnBackWaktu1").addEventListener("click", ()=> goTo("page-dashboard"));
 document.getElementById("btnBackUang1").addEventListener("click", ()=> goTo("page-dashboard"));
-document.getElementById("btnGoWaktu").addEventListener("click", ()=>{ goTo("page-waktu"); loadWaktu(); });
-document.getElementById("btnGoUang").addEventListener("click", ()=>{ goTo("page-uang"); loadUang(); });
+document.getElementById("btnBackIbadah").addEventListener("click", ()=> { goTo("page-dashboard"); refreshDashboard(); });
+
+document.getElementById("btnGoIbadah").addEventListener("click", ()=>{
+  if (isLocked) return;
+  goTo("page-ibadah"); loadIbadah();
+});
+document.getElementById("btnGoWaktu").addEventListener("click", ()=>{
+  if (isLocked) return;
+  goTo("page-waktu"); loadWaktu();
+});
+document.getElementById("btnGoUang").addEventListener("click", ()=>{
+  if (isLocked) return;
+  goTo("page-uang"); loadUang();
+});
 document.getElementById("btnLogout").addEventListener("click", ()=>{
   currentUser = null;
   localStorage.removeItem("myday_user");
@@ -716,7 +776,7 @@ document.getElementById("btnLogin").addEventListener("click", async ()=>{
       localStorage.setItem("myday_user", currentUser);
       okBox.textContent = "Login berhasil! Mengarahkan ke dashboard...";
       okBox.style.display = "block";
-      setTimeout(()=> goTo("page-dashboard"), 500);
+      setTimeout(()=> { goTo("page-dashboard"); refreshDashboard(); }, 500);
     } else {
       errBox.textContent = res.message || "Nama akun atau kata sandi salah.";
       errBox.style.display = "block";
@@ -764,36 +824,200 @@ document.getElementById("btnRegister").addEventListener("click", async ()=>{
   btn.disabled = false; btn.textContent = "Daftar Sekarang";
 });
 
+/* ---------------------- KUNCI AKUN ---------------------- */
+async function refreshDashboard(){
+  if (!currentUser) return;
+  try {
+    const res = await callAPI({ action:"checkLock", username: currentUser });
+    isLocked = !!res.locked;
+    document.getElementById("lockBanner").classList.toggle("show", isLocked);
+    document.getElementById("btnGoIbadah").disabled = isLocked;
+    document.getElementById("btnGoWaktu").disabled = isLocked;
+    document.getElementById("btnGoUang").disabled = isLocked;
+    if (isLocked) openModalPerjanjian();
+  } catch(e) { /* biarkan diam kalau gagal cek */ }
+  loadIbadahChart();
+}
+
+function openModalPerjanjian(){
+  document.getElementById("modalPerjanjian").classList.add("show");
+  document.getElementById("btnTidakSiap").disabled = false;
+}
+document.getElementById("btnHarusSholat").addEventListener("click", openModalPerjanjian);
+
+document.getElementById("btnTidakSiap").addEventListener("click", function(){
+  this.disabled = true; // tombol nonaktif, akun tetap terkunci, modal tetap tampil sampai ditutup manual
+});
+
+document.getElementById("btnYaSiap").addEventListener("click", async ()=>{
+  try {
+    await callAPI({ action:"addPerjanjian", username: currentUser, response: "Ya, Saya Siap" });
+    document.getElementById("modalPerjanjian").classList.remove("show");
+    showToast("Akun terbuka kembali. Yuk sholat! 🙏");
+    await refreshDashboard();
+  } catch(e) {
+    showToast("Gagal menyimpan perjanjian. Coba lagi.");
+  }
+});
+
+/* ---------------------- IBADAH CHART (dashboard) ---------------------- */
+let ibadahChartInstance = null;
+async function loadIbadahChart(){
+  try {
+    const res = await callAPI({ action:"getIbadahChart", username: currentUser });
+    const ctx = document.getElementById("ibadahChart").getContext("2d");
+    const labels = (res.labels||[]).map(formatTanggal);
+    if (ibadahChartInstance) ibadahChartInstance.destroy();
+    ibadahChartInstance = new Chart(ctx, {
+      type:"line",
+      data:{ labels, datasets:[{
+        label:"% Wajib Sudah/Halangan",
+        data: res.percentages || [],
+        borderColor:"#7B5FD9",
+        backgroundColor:"rgba(123,95,217,0.18)",
+        fill:true, tension:0.3,
+        pointBackgroundColor:"#F5A623", pointRadius:3
+      }]},
+      options:{ responsive:true, plugins:{legend:{display:false}},
+        scales:{ y:{ min:0, max:100, ticks:{ callback:v=>v+"%" } } } }
+    });
+  } catch(e){ /* diam */ }
+}
+
+/* ---------------------- IBADAH ---------------------- */
+document.getElementById("ibWajib").addEventListener("change", function(){
+  const sholat = this.value;
+  document.getElementById("ibJam").value = WAJIB_TIMES[sholat] || "";
+  const wrap = document.getElementById("ibSunnahWrap");
+  const row = document.getElementById("ibSunnahRow");
+  row.innerHTML = "";
+  if (sholat && SUNNAH_MAP[sholat]) {
+    wrap.style.display = "block";
+    SUNNAH_MAP[sholat].forEach(item=>{
+      const label = document.createElement("label");
+      label.className = "checkbox-pill";
+      label.innerHTML = `<input type="checkbox" value="${item}"> ${item}`;
+      const cb = label.querySelector("input");
+      cb.addEventListener("change", ()=> label.classList.toggle("checked", cb.checked));
+      row.appendChild(label);
+    });
+  } else {
+    wrap.style.display = "none";
+  }
+});
+
+document.getElementById("ibStatus").addEventListener("change", function(){
+  document.getElementById("ibSunnahWrap").style.display =
+    (this.value === "Halangan" || !document.getElementById("ibWajib").value) ? "none" :
+    (SUNNAH_MAP[document.getElementById("ibWajib").value] ? "block" : "none");
+});
+
+document.getElementById("btnIbCancel").addEventListener("click", ()=>{
+  document.getElementById("ibWajib").value = "";
+  document.getElementById("ibJam").value = "";
+  document.getElementById("ibSunnahWrap").style.display = "none";
+  document.getElementById("ibSunnahRow").innerHTML = "";
+  document.getElementById("ibStatus").value = "Sudah";
+});
+
+document.getElementById("btnIbSave").addEventListener("click", async ()=>{
+  const sholat = document.getElementById("ibWajib").value;
+  const status = document.getElementById("ibStatus").value;
+  if (!sholat) { showToast("Pilih sholat wajib dulu."); return; }
+
+  const sunnah = Array.from(document.querySelectorAll("#ibSunnahRow input:checked")).map(el=>el.value);
+
+  const btn = document.getElementById("btnIbSave");
+  btn.disabled = true;
+  try {
+    const res = await callAPI({ action:"addIbadahWajib", username: currentUser, sholat, status, sunnah });
+    if (res.status === "success") {
+      showToast("Catatan ibadah tersimpan! 🕌");
+      document.getElementById("btnIbCancel").click();
+      loadIbadah();
+    } else {
+      showToast(res.message || "Gagal menyimpan.");
+    }
+  } catch(e) {
+    showToast("Gagal menyimpan. Coba lagi.");
+  }
+  btn.disabled = false;
+});
+
+async function loadIbadah(){
+  document.getElementById("ibadahTanggalLabel").textContent =
+    new Date().toLocaleDateString("id-ID", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+
+  const listEl = document.getElementById("ibadahList");
+  listEl.innerHTML = '<div class="empty-note">Memuat data...</div>';
+  try {
+    const res = await callAPI({ action:"getIbadahToday", username: currentUser });
+    const filled = res.filledWajib || [];
+
+    // nonaktifkan opsi wajib yang sudah tercatat hari ini
+    const sel = document.getElementById("ibWajib");
+    Array.from(sel.options).forEach(opt=>{
+      if (!opt.value) return;
+      opt.disabled = filled.includes(opt.value);
+    });
+
+    document.getElementById("ibCounter").textContent = `${res.wajibCount || 0} dari 5 sholat wajib tercatat hari ini`;
+
+    const data = res.data || [];
+    if (data.length === 0) {
+      listEl.innerHTML = '<div class="empty-note">Belum ada catatan ibadah hari ini.</div>';
+    } else {
+      listEl.innerHTML = "";
+      data.forEach(item=>{
+        const dotClass = item.status === "Sudah" || item.status === "Halangan" ? "dot-done" : "dot-none";
+        const badgeClass = item.status === "Sudah" || item.status === "Halangan" ? "badge-done" : "badge-none";
+        const div = document.createElement("div");
+        div.className = "entry-item";
+        div.innerHTML = `
+          <span class="dot ${dotClass}"></span>
+          <div class="info">
+            <b>${item.tipe === "Wajib" ? item.sholat : (item.sholat + " · " + item.item)}</b>
+            <span>${item.tipe}${item.jam ? " · " + item.jam : ""}</span>
+          </div>
+          <span class="badge ${badgeClass}">${item.status}</span>`;
+        listEl.appendChild(div);
+      });
+    }
+  } catch(e) {
+    listEl.innerHTML = '<div class="empty-note">Gagal memuat data. Periksa koneksi.</div>';
+  }
+}
+
 /* ---------------------- KELOLA WAKTU ---------------------- */
+document.getElementById("wTanggal").value = todayISO();
+
 document.getElementById("wKategori").addEventListener("change", function(){
   document.getElementById("wKategoriLainWrap").style.display = (this.value === "Lainnya") ? "block" : "none";
 });
 
 document.getElementById("btnWCancel").addEventListener("click", ()=>{
-  document.getElementById("wTanggal").value = "";
   document.getElementById("wJam").value = "";
   document.getElementById("wKategori").value = "";
   document.getElementById("wKategoriLain").value = "";
   document.getElementById("wKategoriLainWrap").style.display = "none";
-  document.getElementById("wStatus").value = "Terlaksana";
+  document.getElementById("wStatus").value = "Sudah";
 });
 
 document.getElementById("btnWSave").addEventListener("click", async ()=>{
-  const tanggal = document.getElementById("wTanggal").value;
   const jam = document.getElementById("wJam").value;
   let kategori = document.getElementById("wKategori").value;
   const kategoriLain = document.getElementById("wKategoriLain").value.trim();
   const status = document.getElementById("wStatus").value;
 
   if (kategori === "Lainnya") kategori = kategoriLain || "Lainnya";
-  if (!tanggal || !jam || !kategori) {
-    showToast("Mohon lengkapi tanggal, jam, dan kategori.");
+  if (!jam || !kategori) {
+    showToast("Mohon lengkapi jam dan kategori.");
     return;
   }
   const btn = document.getElementById("btnWSave");
   btn.disabled = true;
   try {
-    await callAPI({ action:"addWaktu", username: currentUser, tanggal, jam, kategori, status });
+    await callAPI({ action:"addWaktu", username: currentUser, jam, kategori, status });
     showToast("Misi berhasil disimpan! 🎉");
     document.getElementById("btnWCancel").click();
     loadWaktu();
@@ -816,8 +1040,8 @@ async function loadWaktu(){
     } else {
       listEl.innerHTML = "";
       data.slice(0,15).forEach(item=>{
-        const dotClass = item.status === "Terlaksana" ? "dot-done" : (item.status === "Proses" ? "dot-proc" : "dot-none");
-        const badgeClass = item.status === "Terlaksana" ? "badge-done" : (item.status === "Proses" ? "badge-proc" : "badge-none");
+        const dotClass = item.status === "Sudah" ? "dot-done" : "dot-none";
+        const badgeClass = item.status === "Sudah" ? "badge-done" : "badge-none";
         const div = document.createElement("div");
         div.className = "entry-item";
         div.innerHTML = `
@@ -850,7 +1074,7 @@ function renderConsistencyChart(data){
     const key = String(item.tanggal).slice(0,10);
     if (!grouped[key]) grouped[key] = { total:0, done:0 };
     grouped[key].total++;
-    if (item.status === "Terlaksana") grouped[key].done++;
+    if (item.status === "Sudah") grouped[key].done++;
   });
   const dates = Object.keys(grouped).sort();
   const percentages = dates.map(d => Math.round((grouped[d].done / grouped[d].total) * 100));
@@ -863,14 +1087,12 @@ function renderConsistencyChart(data){
     data: {
       labels: labels.length ? labels : ["Belum ada data"],
       datasets: [{
-        label: "% Terlaksana",
+        label: "% Sudah",
         data: percentages.length ? percentages : [0],
         borderColor: "#2F5C8F",
         backgroundColor: "rgba(91,155,224,0.18)",
-        fill: true,
-        tension: 0.35,
-        pointBackgroundColor: "#F5A623",
-        pointRadius: 4
+        fill: true, tension: 0.35,
+        pointBackgroundColor: "#F5A623", pointRadius: 4
       }]
     },
     options: {
@@ -895,19 +1117,22 @@ document.getElementById("tabIncomeBtn").addEventListener("click", ()=>{
   document.getElementById("formExpense").classList.remove("active");
 });
 
-// Validasi input jumlah: hanya angka yang diterima
-function onlyDigits(el){
+// Format ribuan saat mengetik (tampilan saja); nilai murni disimpan di dataset.raw
+function attachThousandFormatter(el){
   el.addEventListener("input", ()=>{
-    el.value = el.value.replace(/[^0-9]/g, "");
+    const raw = el.value.replace(/[^0-9]/g, "");
+    el.dataset.raw = raw;
+    el.value = raw ? Number(raw).toLocaleString("id-ID") : "";
   });
 }
-onlyDigits(document.getElementById("eJumlah"));
-onlyDigits(document.getElementById("iJumlah"));
+attachThousandFormatter(document.getElementById("eJumlah"));
+attachThousandFormatter(document.getElementById("iJumlah"));
 
 document.getElementById("btnSaveExpense").addEventListener("click", async ()=>{
   const tanggal = document.getElementById("eTanggal").value;
   const kategori = document.getElementById("eKategori").value;
-  const jumlah = document.getElementById("eJumlah").value;
+  const jumlahEl = document.getElementById("eJumlah");
+  const jumlah = jumlahEl.dataset.raw || jumlahEl.value.replace(/[^0-9]/g,"");
   const keterangan = document.getElementById("eKet").value.trim();
 
   if (!tanggal || !kategori || !jumlah) {
@@ -920,7 +1145,7 @@ document.getElementById("btnSaveExpense").addEventListener("click", async ()=>{
     await callAPI({ action:"addUang", username: currentUser, tipe:"Pengeluaran", tanggal, kategori, jumlah, keterangan });
     showToast("Pengeluaran tersimpan! 💸");
     document.getElementById("eTanggal").value = "";
-    document.getElementById("eJumlah").value = "";
+    jumlahEl.value = ""; jumlahEl.dataset.raw = "";
     document.getElementById("eKet").value = "";
     loadUang();
   } catch(e) { showToast("Gagal menyimpan. Coba lagi."); }
@@ -930,7 +1155,8 @@ document.getElementById("btnSaveExpense").addEventListener("click", async ()=>{
 document.getElementById("btnSaveIncome").addEventListener("click", async ()=>{
   const tanggal = document.getElementById("iTanggal").value;
   const kategori = document.getElementById("iKategori").value;
-  const jumlah = document.getElementById("iJumlah").value;
+  const jumlahEl = document.getElementById("iJumlah");
+  const jumlah = jumlahEl.dataset.raw || jumlahEl.value.replace(/[^0-9]/g,"");
   const keterangan = document.getElementById("iKet").value.trim();
 
   if (!tanggal || !kategori || !jumlah) {
@@ -943,7 +1169,7 @@ document.getElementById("btnSaveIncome").addEventListener("click", async ()=>{
     await callAPI({ action:"addUang", username: currentUser, tipe:"Pemasukan", tanggal, kategori, jumlah, keterangan });
     showToast("Pemasukan tersimpan! 💰");
     document.getElementById("iTanggal").value = "";
-    document.getElementById("iJumlah").value = "";
+    jumlahEl.value = ""; jumlahEl.dataset.raw = "";
     document.getElementById("iKet").value = "";
     loadUang();
   } catch(e) { showToast("Gagal menyimpan. Coba lagi."); }
@@ -953,6 +1179,35 @@ document.getElementById("btnSaveIncome").addEventListener("click", async ()=>{
 function formatRupiah(angka){
   const n = Number(angka) || 0;
   return "Rp" + n.toLocaleString("id-ID");
+}
+
+let uangChartInstance = null;
+function renderUangChart(data){
+  const grouped = {};
+  data.forEach(item=>{
+    const key = String(item.tanggal).slice(0,10);
+    if (!grouped[key]) grouped[key] = { exp:0, inc:0 };
+    const n = Number(item.jumlah) || 0;
+    if (item.tipe === "Pengeluaran") grouped[key].exp += n; else grouped[key].inc += n;
+  });
+  const dates = Object.keys(grouped).sort();
+  const labels = dates.map(formatTanggal);
+  const expData = dates.map(d => grouped[d].exp);
+  const incData = dates.map(d => grouped[d].inc);
+
+  const ctx = document.getElementById("uangChart").getContext("2d");
+  if (uangChartInstance) uangChartInstance.destroy();
+  uangChartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels.length ? labels : ["Belum ada data"],
+      datasets: [
+        { label:"Pengeluaran", data: expData.length?expData:[0], backgroundColor:"#E5594F" },
+        { label:"Pemasukan", data: incData.length?incData:[0], backgroundColor:"#3CB878" }
+      ]
+    },
+    options: { responsive:true, plugins:{legend:{position:"bottom"}}, scales:{ y:{ beginAtZero:true } } }
+  });
 }
 
 async function loadUang(){
@@ -972,22 +1227,24 @@ async function loadUang(){
 
     if (data.length === 0) {
       histEl.innerHTML = '<div class="empty-note">Belum ada catatan keuangan.</div>';
-      return;
+    } else {
+      histEl.innerHTML = "";
+      data.slice(0,20).forEach(item=>{
+        const amtClass = item.tipe === "Pengeluaran" ? "expense" : "income";
+        const sign = item.tipe === "Pengeluaran" ? "-" : "+";
+        const row = document.createElement("div");
+        row.className = "money-row";
+        row.innerHTML = `
+          <div>
+            <span class="cat">${item.kategori}</span>
+            <span class="desc">${formatTanggal(item.tanggal)}${item.keterangan ? " · " + item.keterangan : ""}</span>
+          </div>
+          <span class="amt ${amtClass}">${sign}${formatRupiah(item.jumlah)}</span>`;
+        histEl.appendChild(row);
+      });
     }
-    histEl.innerHTML = "";
-    data.slice(0,20).forEach(item=>{
-      const amtClass = item.tipe === "Pengeluaran" ? "expense" : "income";
-      const sign = item.tipe === "Pengeluaran" ? "-" : "+";
-      const row = document.createElement("div");
-      row.className = "money-row";
-      row.innerHTML = `
-        <div>
-          <span class="cat">${item.kategori}</span>
-          <span class="desc">${formatTanggal(item.tanggal)}${item.keterangan ? " · " + item.keterangan : ""}</span>
-        </div>
-        <span class="amt ${amtClass}">${sign}${formatRupiah(item.jumlah)}</span>`;
-      histEl.appendChild(row);
-    });
+
+    renderUangChart(data);
   } catch(e) {
     histEl.innerHTML = '<div class="empty-note">Gagal memuat data. Periksa koneksi.</div>';
   }
@@ -996,6 +1253,7 @@ async function loadUang(){
 /* ---------------------- CEK SESI LOGIN SAAT DIBUKA ---------------------- */
 if (currentUser) {
   goTo("page-dashboard");
+  refreshDashboard();
 } else {
   goTo("page-login");
 }
